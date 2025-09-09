@@ -1,0 +1,358 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abanob Ashraf - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #e0f7fa; /* Light cyan background */
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background-color: #b2ebf2;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #006064;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #004d40;
+        }
+
+        .contact-info a {
+            color: #00796b;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            margin-bottom: 30px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        section h2 {
+            color: #006064;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #b2ebf2;
+            padding-bottom: 5px;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        .job, .education, .certificate, .training {
+            margin-bottom: 20px;
+        }
+
+        .job h3, .education h3, .certificate h3, .training h3 {
+            color: #004d40;
+            font-size: 1.4em;
+        }
+
+        .job p, .education p, .certificate p, .training p {
+            color: #555;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .skills-grid div {
+            background-color: #e0f7fa;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .skills-grid h3 {
+            color: #006064;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            header p {
+                font-size: 1em;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Abanob Ashraf Monir</h1>
+            <p>QA Engineer | Selenium | TestNG | Postman | JMeter</p>
+            <div class="contact-info">
+                <p>Phone: 01017795526 | Email: <a href="mailto:Abanoub.ashraf1@outlook.com">Abanoub.ashraf1@outlook.com</a></p>
+                <p>Location: Heliopolis, Cairo</p>
+                <p><a href="https:www.linkedin.com/in/abanob-ashraf-monir">LinkedIn</a> | <a href="https://github.com/AbanobA93">GitHub</a></p>
+            </div>
+        </header>
+
+        <section id="summary">
+            <h2>Professional Summary</h2>
+            <p>Detail-oriented QA Engineer with over 2 years of experience in manual and automated testing for web and mobile applications. Proficient in Selenium WebDriver, TestNG, Postman, and JMeter, with strong knowledge of SDLC, STLC, Agile/Scrum, and defect management lifecycle. Skilled in writing and executing test cases, performing API testing, and delivering high-quality software through structured testing processes. ISTQB Foundation Level certified and ISTQB Agile Tester certified.</p>
+        </section>
+
+        <section id="experience">
+            <h2>Professional Experience</h2>
+            <div class="job">
+                <h3>Technical Support for Medical Equipment & Automation Engineer – Centro</h3>
+                <p>May 2025 – Present</p>
+                <ul>
+                    <li>Provided technical support for medical equipment.</li>
+                    <li>Automated tasks using Selenium to enhance efficiency.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3>Software Test Engineer – Freelancer, Egypt</h3>
+                <p>June 2023 – Present</p>
+                <ul>
+                    <li>Reviewed and analyzed business requirements, functional specifications, and UX designs.</li>
+                    <li>Created test cases and executed manual and automated testing.</li>
+                    <li>Identified and reported software defects to ensure high-quality releases.</li>
+                    <li>Automated daily tasks using Selenium to support business and save time.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3>Software Test Engineer – Conclinic</h3>
+                <p>Nov 2024 – April 2025</p>
+                <ul>
+                    <li>Conducted functional and non-functional web and mobile application testing.</li>
+                    <li>Performed smoke, regression, and end-to-end testing.</li>
+                    <li>Led API testing efforts and contributed to test automation scripts.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3>Real-Time Manager – Vodafone Spain, Cairo</h3>
+                <p>Oct 2022 – Nov 2023</p>
+                <ul>
+                    <li>Managed real-time call center performance and optimized workforce efficiency.</li>
+                    <li>Ensured adherence to service-level agreements (SLAs).</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3>Quality Auditor – Vodafone Spain, Cairo</h3>
+                <p>Nov 2019 – Oct 2022</p>
+                <ul>
+                    <li>Monitored and evaluated customer interactions to maintain quality standards.</li>
+                    <li>Provided feedback and suggested process improvements.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3>Other Roles – Vodafone Spain, Cairo</h3>
+                <p>2016 – 2024</p>
+                <ul>
+                    <li>Technical Support, Floor Walker, Team Leader – Delivered customer-focused solutions and ensured operational excellence.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="education">
+            <h2>Education</h2>
+            <div class="education">
+                <h3>Bachelor of Information and Systems Technologies</h3>
+                <p>Future Academy</p>
+            </div>
+        </section>
+
+        <section id="certificates">
+            <h2>Certificates</h2>
+            <div class="certificate">
+                <h3>CTFL ISTQB® Certified Tester Agile Tester – AT</h3>
+                <p>Certificate Code: 250619014 (Valid until 28-June-2025)</p>
+            </div>
+            <div class="certificate">
+                <h3>CTFL4- ISTQB® Certified Tester Foundation Level v4</h3>
+                <p>Certificate Code: 250326024 (Valid until 26-March-2025)</p>
+            </div>
+        </section>
+
+        <section id="training">
+            <h2>Training and Workshops</h2>
+            <div class="training">
+                <h3>ISTQB Foundation Level Course – Mahara-Tech</h3>
+                <p>Validation ID: YJLbf5eY (Nov 2024)</p>
+            </div>
+            <div class="training">
+                <h3>Software Testing Concepts & Techniques Course – Mahara-Tech</h3>
+                <p>Validation ID: vU45vhVN88 (Sep 2024)</p>
+            </div>
+            <div class="training">
+                <h3>Digital Egypt Pioneers Initiative - Software Testing Track</h3>
+                <p>June 2025 – Present</p>
+            </div>
+            <div class="training">
+                <h3>Software Testing Diploma – Kimit Academy</h3>
+                <p>April 2025 – Present</p>
+            </div>
+            <div class="training">
+                <h3>Manual Testing Workshop – QA Cart</h3>
+                <p>Jan 2025</p>
+            </div>
+            <div class="training">
+                <h3>CCNA (Self-Study)</h3>
+            </div>
+            <div class="training">
+                <h3>ITIL Foundation Level</h3>
+            </div>
+            <div class="training">
+                <h3>Workshops in Manual & API Testing – Wolf Team & Eng. Eman AlAyyat</h3>
+                <p>Aug 2024</p>
+            </div>
+            <div class="training">
+                <h3>4-Week Workshop in Software Testing – Upskilling</h3>
+                <p>Nov 2024</p>
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2>Skills & Technical Proficiency</h2>
+            <div class="skills-grid">
+                <div>
+                    <h3>Testing Skills</h3>
+                    <ul>
+                        <li>Manual Testing (Web & Mobile)</li>
+                        <li>API Testing (Postman, Swagger, SOAP UI)</li>
+                        <li>Test Case Creation & Bug Reporting</li>
+                        <li>Regression, Smoke & Sanity Testing</li>
+                        <li>Agile Methodologies & Scrum</li>
+                        <li>Performance Testing (JMeter)</li>
+                        <li>Understanding SRS</li>
+                        <li>Reviewing Requirements & Code</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Automation Testing</h3>
+                    <ul>
+                        <li>Selenium WebDriver</li>
+                        <li>TestNG Framework</li>
+                        <li>Maven & POM.XML</li>
+                        <li>Java (OOP Principles)</li>
+                        <li>Page Object Model (POM)</li>
+                        <li>Azure DevOps</li>
+                        <li>GitHub, Git</li>
+                        <li>PMD</li>
+                        <li>Database Testing</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Tools & Technologies</h3>
+                    <ul>
+                        <li>Jira, ClickUp</li>
+                        <li>Microsoft Office Suite, Google Sheets</li>
+                        <li>Wireshark, Packet Tracer</li>
+                        <li>Java</li>
+                        <li>HTML, CSS, JavaScript (Basic)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Languages</h3>
+                    <ul>
+                        <li>Arabic – Native</li>
+                        <li>English – Native</li>
+                        <li>Spanish – Advanced</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Smooth scroll for navigation (if needed in the future)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
